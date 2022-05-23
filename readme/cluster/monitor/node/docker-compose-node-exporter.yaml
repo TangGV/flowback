@@ -1,0 +1,9 @@
+version: '3.2'
+services:
+  my_exporter_node:
+    image: prom/node-exporter
+    restart: always
+    volumes:
+      - /:/host:ro,rslave
+    ports:
+      - "9100:9100"

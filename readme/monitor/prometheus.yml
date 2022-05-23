@@ -1,0 +1,26 @@
+global:
+  scrape_interval: 60s
+  evaluation_interval: 60s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          instance: prometheus
+  - job_name: linux
+    static_configs:
+      #替换成被监控的主机ip：端口,多个 'localhost:9100','localhost:9100'
+      - targets: ['localhost:9100']
+        labels:
+          instance: localhost
+  - job_name: 'serverjvm'
+    # 采集的间隔时间
+    scrape_interval: 15s
+    # 采集时的超时时间
+    scrape_timeout: 10s
+    # 采集路径
+    metrics_path: '/actuator/prometheus'
+    # 采集服务的地址
+    static_configs:
+      - targets: ['localhost:16666']

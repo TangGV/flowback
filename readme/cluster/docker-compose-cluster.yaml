@@ -1,0 +1,41 @@
+#安装docker
+# curl -sSL https://get.daocloud.io/docker | sh
+# systemctl enable docker.service
+# systemctl start  docker.service
+#安装docker compose
+# curl -L https://get.daocloud.io/docker/compose/releases/download/v2.4.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+# sudo chmod +x /usr/local/bin/docker-compose
+# sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+#启动命令 docker-compose --compatibility -f docker-compose-standalone.yaml up -d
+version: '3.2'
+networks:
+  fb:
+services:
+  clickhouse:
+    image: yandex/clickhouse-server
+    ports:
+      - "8124:8123"
+    networks:
+      - fb
+  server:
+    image: ccr.ccs.tencentyun.com/flowback/server
+    environment:
+      CK_PORT: 8123
+      CK_HOST: clickhouse
+      NETTY_SERVER_HOST: server
+      NETTY_SERVER_PORT: 22222
+      DATASOURCE_PLATFORM: clickhouse
+      JAVA_OPTS: "-Dfile.encoding=utf-8 -Xmx1G"
+    ports:
+      - "16666:16666"
+      - "22222:22222"
+    networks:
+      - fb
+  work:
+    image: ccr.ccs.tencentyun.com/flowback/work
+    environment:
+      NETTY_SERVER_HOST: server
+      NETTY_SERVER_PORT: 22222
+      JAVA_OPTS: "-Dfile.encoding=utf-8 -Xmx1G"
+    networks:
+      - fb

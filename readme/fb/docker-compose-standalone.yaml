@@ -1,0 +1,83 @@
+#安装docker
+# curl -sSL https://get.daocloud.io/docker | sh
+# systemctl enable docker.service
+# systemctl start  docker.service
+#安装docker compose
+# curl -L https://get.daocloud.io/docker/compose/releases/download/v2.4.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+# sudo chmod +x /usr/local/bin/docker-compose
+# sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+#启动命令 docker-compose --compatibility -f docker-compose-standalone.yaml up -d
+version: '3.2'
+networks:
+  fb:
+services:
+  clickhouse:
+    #没有挂载目录，容器删除数据删除
+    image: yandex/clickhouse-server
+    ports:
+      - "8123:8123"
+    networks:
+      - fb
+  server:
+    image: ccr.ccs.tencentyun.com/flowback/server
+    environment:
+      CK_URL: jdbc:clickhouse://clickhouse:8123/default?connect_timeout=60000&socket_timeout=60000
+      CONSUME_THREAD_COUNT: 2
+      CONSUME_PLATFORM: netty
+      DATASOURCE_PLATFORM: clickhouse
+      NETTY_SERVER_HOST: server
+      NETTY_SERVER_PORT: 22222
+      JAVA_OPTS: "
+                -Xmx8G
+                -XX:+UseConcMarkSweepGC
+                -XX:+UseParNewGC
+                -XX:CMSInitiatingOccupancyFraction=20
+                -XX:+UseCMSCompactAtFullCollection
+                -XX:CMSFullGCsBeforeCompaction=3
+                -XX:MetaspaceSize=258m
+                -XX:MaxMetaspaceSize=512m
+                -XX:MaxDirectMemorySize=2048m 
+                -Dfile.encoding=utf-8
+      "
+    ports:
+      - "16666:16666"
+      - "22222:22222"
+    networks:
+      - fb
+  work:
+    image: ccr.ccs.tencentyun.com/flowback/work
+    environment:
+      NETTY_SERVER_HOST: server
+      NETTY_SERVER_PORT: 22222
+      JAVA_OPTS: "
+                -Dfile.encoding=utf-8
+                -Xmx4G
+       "
+    networks:
+      - fb
+  exporter_node:
+    image: prom/node-exporter
+    restart: always
+    volumes:
+      - /:/host:ro,rslave
+    ports:
+      - "9100:9100"
+    networks:
+      - fb
+  prometheus:
+    image: prom/prometheus
+    restart: always
+    volumes:
+      #路径为monitor目录下
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - fb
+  grafanar:
+    image: grafana/grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - fb

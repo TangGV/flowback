@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 60s
+  evaluation_interval: 60s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          instance: prometheus
+  - job_name: linux
+    static_configs:
+      #替换成被监控的主机ip：端口,多个 'localhost:9100','localhost:9100'
+      - targets: ['localhost:9100']
+        labels:
+          instance: localhost

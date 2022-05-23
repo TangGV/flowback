@@ -1,0 +1,32 @@
+<yandex>
+<clickhouse_remote_servers>
+    <!-- 集群名 -->
+    <perftest_3shards_1replicas>
+        <!-- 分片地址 -->
+        <shard>
+            <internal_replication>true</internal_replication>
+            <replica>
+                <host>192.168.4.139</host>
+                <port>9000</port>
+            </replica>
+        </shard>
+        <shard>
+            <internal_replication>true</internal_replication>
+            <replica> 
+                <host>192.168.4.140</host>
+                <port>9000</port>
+            </replica>
+        </shard>
+        <shard>
+            <internal_replication>true</internal_replication>
+            <replica>
+                <host>192.168.4.141</host>
+                <port>9000</port>
+            </replica>
+        </shard>
+    </perftest_3shards_1replicas>
+</clickhouse_remote_servers>
+
+<listen_host>0.0.0.0</listen_host>
+
+</yandex>

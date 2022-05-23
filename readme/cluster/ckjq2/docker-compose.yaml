@@ -1,0 +1,19 @@
+version: '2'
+
+services:
+  clickhouse02:
+    image: yandex/clickhouse-server
+    expose:
+      - "9000"
+    user: root
+    ports:
+      - "9000:9000"  
+      - "8123:8123"
+    volumes:
+      - /root/ckjq/clickhouse-3shards/ch02/etc:/etc/clickhouse-server 
+     # - /root/ckjq/clickhouse-3shards/ch02/data:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    privileged: true

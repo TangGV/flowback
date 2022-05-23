@@ -1,0 +1,8 @@
+# Tomcat
+server:
+  port: 16667
+flowback:
+  client:
+    nettyTestLoop: false
+    serverId: ${NETTY_SERVER_HOST:vipjava.iok.la}
+    port: ${NETTY_SERVER_PORT:22222}

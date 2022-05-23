@@ -1,0 +1,39 @@
+# Tomcat
+server:
+  port: ${SERVER_PORT:16666}
+# Spring
+spring:
+flowback:
+  netty:
+    host: ${NETTY_SERVER_HOST:192.168.3.12}
+    port: ${NETTY_SERVER_PORT:22222}
+  #消息队列名
+  consumeQueue: ${COMSUME_QUEUE_NAME:log}
+  #消费线程数
+  consumeThreadCount: ${CONSUME_THREAD_COUNT:6}
+  #开启堆外缓存
+  ohcache: ${OHCACHE:true}
+  #堆外内存大小,单位字节,需要小于设置-XX:MaxDirectMemorySize
+  ohSize: ${OHCACHE:4294967296}
+  #rabbitmq  netty
+  consumePlatform: ${CONSUME_PLATFORM:netty}
+  #clickhouse、caffeine
+  datasourcePlatform: ${DATASOURCE_PLATFORM:clickhouse}
+  #集群地址使用clickhouseUrl: jdbc:clickhouse://192.168.4.139:8123,192.168.4.140:8123,192.168.4.141:8123/default?connect_timeout=60000&socket_timeout=60000
+  clickhouseUrl: ${CK_URL:jdbc:clickhouse://192.168.4.128:8123/default?connect_timeout=60000&socket_timeout=60000}
+#日志级别
+logging:
+  level:
+    cn:
+      flowback: info
+management:
+  endpoints:
+    web:
+      base-path: /actuator #配置端点访问前缀
+      exposure:
+        include: '*' #暴露所有端点
+  health:
+    redis:
+      enabled: false
+    rabbit:
+      enabled: false
